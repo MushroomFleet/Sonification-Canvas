@@ -23,34 +23,53 @@ Draw a horizontal line at the bottom of the canvas — you hear bass. Draw one a
 - **Eraser** — Subtract amplitude to carve shapes and create rhythmic gaps
 - **Harmonic Brush** — Paint a fundamental frequency plus up to 16 overtones automatically
 - **Line Tool** — Precise straight lines for sweeps, glissandi, and sustained notes
-- **Fill / Gradient** — Flood fill enclosed regions or draw smooth amplitude gradients
-- **Select Tool** — Rectangular selection with copy, paste, delete, and gain scaling
+- **Fill / Gradient** — Flood fill enclosed regions or draw smooth amplitude gradients with dedicated mode toggle
+- **Select Tool** — Rectangular selection with copy, paste, delete, gain scaling, and drag-to-move
+
+### Image Import
+- **Drag and drop** any image (JPEG, PNG, GIF, WebP, BMP) onto the canvas to convert it into a playable spectrogram
+- Or use the **Import Image** button in the Left Sidebar to open a file picker
+- Greyscale luminance maps to amplitude with perceptual gamma correction
+- Colour data is preserved when Colour Mode is active
+
+### Preset Library
+- **Save** canvas state + all synthesis settings to named presets stored in your browser
+- **Load** presets to instantly recall a previous creation with all engine/scale/envelope settings
+- **Delete** presets you no longer need — all managed from the Left Sidebar
 
 ### Synthesis Engines
-- **ISTFT** — Inverse Short-Time Fourier Transform with Griffin-Lim phase reconstruction for export
+- **ISTFT** — Inverse Short-Time Fourier Transform with Griffin-Lim phase reconstruction (with divergence early-stop)
 - **Additive** — Up to 512 phase-coherent sine oscillators per time column
 - **Noise Band** — IIR bandpass-filtered white noise for textured, atmospheric sounds
 - **Blend** — Crossfade between Additive and Noise Band for hybrid timbres
 
 ### Colour Mode
-Toggle Colour Mode to paint timbre directly onto the canvas using colour:
+Toggle Colour Mode (<kbd>C</kbd>) to paint timbre directly onto the canvas using colour:
 - **Red** = Sawtooth wave (bright, buzzy)
 - **Green** = Square wave (hollow, reedy)
 - **Blue** = Sine / flute (pure, clean)
 - Saturation controls harmonic intensity; hue blends smoothly between archetypes
+- Engine compatibility warning when using Noise Band with Colour Mode
 
 ### Audio & Export
 - Real-time preview playback with ADSR envelope shaping
 - Export to **WAV**, **AIFF**, **MP3** (320 kbps), or **FLAC**
 - Configurable bit depth (16 / 24 / 32-bit float) and sample rate (44.1 / 48 kHz)
 - Peak normalisation to -0.3 dBFS
-- Non-blocking export via Web Worker
+- Non-blocking export via Web Worker with **estimated time remaining** display
+- File size warning for very large exports (>500 MB)
+- Web Audio API detection with graceful fallback messaging
+
+### Frequency Scale Remapping
+- **4 frequency scales**: Logarithmic, Mel, Linear, ERB
+- Switching scales **remaps existing canvas content** to the new scale with interpolation — your drawing is preserved, not discarded
 
 ### Musical Aids
 - **Piano Roll** overlay with labelled note lines
 - **Beat Grid** overlay synced to configurable BPM
 - **Snap-to-Note** for pitch-perfect drawing
-- **4 frequency scales**: Logarithmic, Mel, Linear, ERB
+- **Cursor preview** — live brush circle and harmonic ghost lines on the overlay canvas
+- **dB volume readout** alongside the percentage slider
 
 ---
 
@@ -99,6 +118,7 @@ The `dist/` folder contains a fully static site ready for any web host.
 |---|---|
 | `Space` | Play / Stop |
 | `B` `E` `H` `L` `F` `S` | Brush, Eraser, Harmonic, Line, Fill, Select |
+| `C` | Toggle Colour Mode |
 | `Ctrl+Z` | Undo |
 | `Ctrl+Shift+Z` | Redo |
 | `Ctrl+C` / `Ctrl+V` | Copy / Paste selection |

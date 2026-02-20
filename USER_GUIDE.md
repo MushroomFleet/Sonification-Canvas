@@ -38,12 +38,52 @@ The interface is divided into five zones:
 
 | Zone | Purpose |
 |---|---|
-| **Toolbar** (top) | Drawing tools, brush options, Colour Mode toggle |
-| **Left Sidebar** | Synthesis engine, frequency scale, window function, Colour Picker |
+| **Toolbar** (top) | Drawing tools, brush options, Fill/Gradient toggle, Colour Mode toggle |
+| **Left Sidebar** | Image Import, Presets, Colour Picker, synthesis engine, frequency scale, window function |
 | **Canvas** (centre) | The spectrogram drawing area — click and drag to paint sound |
 | **Right Sidebar** | ADSR envelope editor, Export button |
 | **Transport Bar** | Play / Stop, Loop toggle, master Volume |
 | **Overlay Controls** | Piano Roll, Beat Grid, Snap-to-Note, BPM, Duration |
+
+---
+
+## Image Import
+
+You can load any image file and convert it into a playable spectrogram — two methods are available:
+
+**Drag and Drop:** Drag any image (JPEG, PNG, GIF, WebP, or BMP) from your desktop directly onto the canvas area. The image is resized to fit the 2048x1024 canvas and converted to greyscale amplitude using perceptual luminance with gamma 2.2 correction.
+
+**Import Button:** Click the **Import Image** button at the top of the Left Sidebar to open a file picker.
+
+When **Colour Mode** is active, the image's RGB colour data is also imported, allowing you to hear the timbre information encoded in the original colours.
+
+**Tutorial — Import a photo as sound:**
+1. Find any photograph or image on your computer.
+2. Drag it from your file explorer and drop it onto the black canvas area.
+3. A toast notification confirms "Image imported".
+4. Press `Space` to play — the image is now a spectrogram you can hear.
+5. Try enabling Colour Mode before importing a colourful image — the colours become timbre.
+
+---
+
+## Preset Library
+
+Presets let you save and recall your canvas content along with all synthesis settings. They are stored in your browser's local storage.
+
+The **Presets** panel is in the Left Sidebar, below the Import button.
+
+- Click **+ Save** to enter a name and save the current canvas + all settings as a preset.
+- Click any preset name in the list to load it (restores the canvas buffer, colour data, engine, scale, envelope, and all other settings).
+- Hover over a preset and click the **x** button to delete it.
+
+Loading a preset creates an undo snapshot, so you can always `Ctrl+Z` to go back to what you had before loading.
+
+**Tutorial — Save and reload a creation:**
+1. Draw something interesting on the canvas and configure your preferred engine and ADSR settings.
+2. In the Left Sidebar, click **+ Save** next to the Presets heading.
+3. Type a name (e.g., "Bass Drone v1") and press Enter.
+4. Clear the canvas with the Eraser or start a new drawing.
+5. Click the preset name in the list — your original creation and all settings are instantly restored.
 
 ---
 
@@ -105,7 +145,7 @@ Draws a straight line between two points. Click to set the start point, drag to 
 
 ### Fill / Gradient Tool (F)
 
-Two modes controlled by a single tool:
+Two modes controlled by a single tool. When the Fill tool is active, a **Fill / Gradient** toggle appears in the Toolbar so you can switch between modes.
 
 **Flood Fill** (default): Click on a region to fill all connected pixels of similar amplitude with the current opacity value. Works like a paint-bucket — fills outward until it hits edges or areas with significantly different amplitude.
 
@@ -117,7 +157,7 @@ Two modes controlled by a single tool:
 
 ### Select Tool (S)
 
-Draw a rectangular selection by clicking and dragging. A marching-ants border appears around the selection. A floating toolbar appears below the canvas with these operations:
+Draw a rectangular selection by clicking and dragging. A marching-ants border appears around the selection. You can **drag-move** an existing selection by clicking inside it and dragging to a new position. A floating toolbar appears below the canvas with these operations:
 
 | Button | Action |
 |---|---|
@@ -152,6 +192,7 @@ Draw a rectangular selection by clicking and dragging. A marching-ants border ap
 | `L` | Line tool |
 | `F` | Fill tool |
 | `S` | Select tool |
+| `C` | Toggle Colour Mode |
 | `Ctrl+Z` | Undo |
 | `Ctrl+Shift+Z` | Redo |
 | `Ctrl+C` | Copy selection |
@@ -249,6 +290,8 @@ The **Scale** dropdown changes how canvas rows map to frequencies.
 
 The canvas always covers **20 Hz** (bottom) to **20,000 Hz** (top).
 
+**Scale Remapping:** When you switch between frequency scales, the existing canvas content is automatically remapped to the new scale using linear interpolation. Your drawing is preserved — it isn't discarded or distorted. This also generates an undo snapshot, so you can revert with `Ctrl+Z` if you prefer the previous scale.
+
 ---
 
 ## Window Function (Left Sidebar)
@@ -330,12 +373,15 @@ Click the **Export** button in the Right Sidebar to open the Export dialog.
 | **Peak Normalise** toggle | Normalises the output to -0.3 dBFS to prevent clipping |
 | **Filename** | Editable text field (default: "sonification-export") |
 
-Click **Render & Download** to synthesise and download. A progress bar shows the export status. You can cancel at any time.
+Click **Render & Download** to synthesise and download. A progress bar shows the export status along with an **estimated time remaining** readout. You can cancel at any time.
+
+If the estimated file size exceeds 500 MB, a confirmation dialog appears before rendering begins.
 
 **Notes:**
 - MP3 format ignores the bit depth setting (encoded at 320 kbps).
-- The ISTFT engine uses Griffin-Lim phase reconstruction during export for higher quality than the real-time preview.
+- The ISTFT engine uses Griffin-Lim phase reconstruction during export for higher quality than the real-time preview. Griffin-Lim includes automatic divergence detection and will stop early if phase reconstruction begins to diverge.
 - FLAC export currently produces a WAV file (FLAC encoding is a planned future feature).
+- The Transport Bar displays the master volume in **dB** alongside the percentage slider for precise level monitoring.
 
 **Tutorial — Export your first sound:**
 1. Draw something on the canvas.
